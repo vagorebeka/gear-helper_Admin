@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Newtonsoft.Json;
+using WpfLogin;
 
 namespace GearHelper_Admin
 {
@@ -27,6 +28,8 @@ namespace GearHelper_Admin
         public MainWindow()
         {
             InitializeComponent();
+            lblEmail.Content = UserInfo.CustomerEmail;
+            lblName.Content = UserInfo.CustomerName;
         }
 
         private void listItems()
