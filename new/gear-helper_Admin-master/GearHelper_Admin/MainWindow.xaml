@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GearHelper_Admin"
         mc:Ignorable="d"
-        Title="Gear Helper Admin" Height="450" Width="700">
+        Title="Gear Helper Admin" Height="600" Width="700">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -24,7 +24,7 @@
         <StackPanel Grid.Row="1" Grid.Column="1" x:Name="stackPanel">
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="2" Grid.RowSpan="2">
-            <Button x:Name="newBtn" Content="New" Click="newBtn_Click" Margin="5, 5, 5, 5"/>
+            <Button x:Name="newItemBtn" Content="New Item" Click="newItem_Click" Margin="5, 5, 5, 5"/>
             <Button x:Name="modifytBtn" Content="Modify" Margin="5, 5, 5, 5"/>
             <Button x:Name="deleteBtn" Content="Delete" Margin="5, 5, 5, 5"/>
             <Label x:Name="lblName" Margin="2" FontSize="20"/>
