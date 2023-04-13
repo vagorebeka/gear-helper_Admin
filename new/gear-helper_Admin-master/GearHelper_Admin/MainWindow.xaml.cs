@@ -28,20 +28,20 @@ namespace GearHelper_Admin
         private string userUrl = "http://localhost:8000/api/user";
         ListBox listBox = new ListBox();
         //String connectionString = "Server=localhost;Database=gear-helper;User ID=root";
+
         TextBox nameBox = new TextBox();
         TextBox stat1amountBox = new TextBox();
         TextBox stat2amountBox = new TextBox();
         TextBox stat3amountBox = new TextBox();
-
         ComboBox stat1ComboBox = new ComboBox();
         ComboBox stat2ComboBox = new ComboBox();
         ComboBox stat3ComboBox = new ComboBox();
-
         ComboBox slotBox = new ComboBox();
         ComboBox materialBox = new ComboBox();
         int material = 0;
 
         Label label = new Label();
+        Button cancelButton = new Button();
 
         List<String> itemNameList = new List<String>();
 
@@ -80,6 +80,15 @@ namespace GearHelper_Admin
             stackPanel.Children.Add(successLabel);
         }
 
+        private void addCancelButton()
+        {
+            cancelButton.Content = "Cancel";
+            cancelButton.Width = 70;
+            cancelButton.HorizontalAlignment = HorizontalAlignment.Left;
+            cancelButton.Margin = new Thickness(0, 5, 5, 5);
+            cancelButton.Click += CancelButton_Click;
+        }
+
         private void listItems()
         {
             addListBox();
@@ -114,17 +123,14 @@ namespace GearHelper_Admin
 
         private void userList_Click(object sender, RoutedEventArgs e)
         {
+            clearAddItem();
             listUsers();
         }
 
         private void itemList_Click(object sender, RoutedEventArgs e)
         {
+            clearAddItem();
             listItems();
-        }
-
-        private void addUser_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private bool statAmountsTry()
@@ -257,7 +263,6 @@ namespace GearHelper_Admin
                 if (response.IsSuccessStatusCode)
                 {
                     //label.Content = "OK";
-                    clearAddItem();
                     successLabel();
                 }
                 else
@@ -284,11 +289,6 @@ namespace GearHelper_Admin
                 }*/
                 //successLabel();
             }
-        }
-
-        private void newUser_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void comboBoxAddItems()
@@ -335,8 +335,8 @@ namespace GearHelper_Admin
         private void newItem_Click(object sender, RoutedEventArgs e)
         {
             stackPanel.Children.Clear();
-
             comboBoxAddItems();
+            addCancelButton();
 
             Label nameLabel = new Label();
             nameLabel.Content = "Name";
@@ -360,37 +360,46 @@ namespace GearHelper_Admin
             addItem.Content = "Add item";
             addItem.Width = 70;
             addItem.HorizontalAlignment = HorizontalAlignment.Left;
-            addItem.Margin = new Thickness(0,5,5,5);
+            addItem.Margin = new Thickness(0,15,5,5);
 
             //stat1amountBox.PreviewTextInput += new TextCompositionEventHandler(NumberValidation());
 
             stackPanel.Children.Add(nameLabel);
+            nameBox.Text = "";
             stackPanel.Children.Add(nameBox);
             stackPanel.Children.Add(stat1Label);
+            stat1ComboBox.SelectedItem = null;
             stackPanel.Children.Add(stat1ComboBox);
             stackPanel.Children.Add(stat1amountLabel);
+            stat1amountBox.Text = "";
             stackPanel.Children.Add(stat1amountBox);
             stackPanel.Children.Add(stat2Label);
+            stat2ComboBox.SelectedItem = null;
             stackPanel.Children.Add(stat2ComboBox);
             stackPanel.Children.Add(stat2amountLabel);
+            stat2amountBox.Text = "";
             stackPanel.Children.Add(stat2amountBox);
             stackPanel.Children.Add(stat3Label);
+            stat3ComboBox.SelectedItem = null;
             stackPanel.Children.Add(stat3ComboBox);
             stackPanel.Children.Add(stat3amountLabel);
+            stat3amountBox.Text = "";
             stackPanel.Children.Add(stat3amountBox);
             stackPanel.Children.Add(slotLabel);
+            slotBox.SelectedItem = null;
             stackPanel.Children.Add(slotBox);
             stackPanel.Children.Add(materialLabel);
+            materialBox.SelectedItem = null;
             stackPanel.Children.Add(materialBox);
             stackPanel.Children.Add(addItem);
             stackPanel.Children.Add(label);
+            stackPanel.Children.Add(cancelButton);
 
             addItem.Click += addItem_Click;
         }
 
         private async void delete(object o)
         {
-            // TODO: find and delete the item on localhost using the id of the item in the listbox and html crud
             try
             {
                 Item itemToDelete = (Item)o;
@@ -400,7 +409,7 @@ namespace GearHelper_Admin
                     HttpResponseMessage response = await client.DeleteAsync(address);
                     if (response.IsSuccessStatusCode)
                     {
-                        labelRight.Content = String.Format("Item {0}\ndeleted", itemToDelete.Id);
+                        labelRight.Content = String.Format("Item #{0}\ndeleted", itemToDelete.Id);
                         listItems();
                     }
                     else
@@ -418,7 +427,7 @@ namespace GearHelper_Admin
                     HttpResponseMessage response = await client.DeleteAsync(address);
                     if (response.IsSuccessStatusCode)
                     {
-                        labelRight.Content = String.Format("User {0}\ndeleted", userToDelete.Id);
+                        labelRight.Content = String.Format("User #{0}\ndeleted", userToDelete.Id);
                         successLabel();
                     }
                     else
@@ -434,22 +443,31 @@ namespace GearHelper_Admin
 
         private void deleteBtn_Click(object sender, RoutedEventArgs e)
         {
-            TextBlock textBlock = new TextBlock();
-            textBlock.Text = "Are you sure?";
-            textBlock.HorizontalAlignment = HorizontalAlignment.Center;
-            stackPanelRight.Children.Add(textBlock);
-            Button yes = new Button();
-            yes.Content = "YES";
-            yes.Width = 50;
-            yes.Margin = new Thickness(5,5,5,5);
-            Button no = new Button();
-            no.Content = "NO";
-            no.Width = 50;
-            no.Margin = new Thickness(5, 5, 5, 5);
-            stackPanelRight.Children.Add(yes);
-            stackPanelRight.Children.Add(no);
-            yes.Click += Yes_Click;
-            no.Click += No_Click;
+            if (listBox.SelectedItem != null)
+            {
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = "Are you sure?";
+                textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                stackPanelRight.Children.Add(textBlock);
+                Button yes = new Button();
+                yes.Content = "YES";
+                yes.Width = 50;
+                yes.Margin = new Thickness(5,5,5,5);
+                Button no = new Button();
+                no.Content = "NO";
+                no.Width = 50;
+                no.Margin = new Thickness(5, 5, 5, 5);
+                stackPanelRight.Children.Add(yes);
+                stackPanelRight.Children.Add(no);
+                yes.Click += Yes_Click;
+                no.Click += No_Click;
+            }
+            else
+            {
+                stackPanel.Children.Clear();
+                label.Content = "Please choose an item or user";
+                stackPanel.Children.Add(label);
+            }
         }
 
         private void No_Click(object sender, RoutedEventArgs e)
@@ -460,8 +478,166 @@ namespace GearHelper_Admin
         private void Yes_Click(object sender, RoutedEventArgs e)
         {
             stackPanelRight.Children.Clear();
-
             delete(listBox.SelectedItem);
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            stackPanel.Children.Clear();
+        }
+
+        private void modifytBtn_Click(object sender, RoutedEventArgs e)
+        { // item: opens the add new page with everything already written in but the button says "update" instead of "add" -- user: can change email and admin status
+            if (listBox.SelectedItem == null)
+            {
+                stackPanel.Children.Clear();
+                label.Content = "Please choose an item or user";
+                stackPanel.Children.Add(label);
+            }
+            else
+            {
+                try
+                {
+                    Item itemToModify = (Item)listBox.SelectedItem;
+                    modifyItem();
+                }
+                catch
+                {
+                    User userToModify = (User)listBox.SelectedItem;
+                    modifyUser();
+                }
+            }
+        }
+
+        private void modifyItem()
+        {
+            Item itemToModify = (Item)listBox.SelectedItem;
+            stackPanel.Children.Clear();
+            comboBoxAddItems();
+            addCancelButton();
+
+            Label nameLabel = new Label();
+            nameLabel.Content = "Name";
+            Label stat1Label = new Label();
+            stat1Label.Content = "Stat1";
+            Label stat1amountLabel = new Label();
+            stat1amountLabel.Content = "Stat1 amount";
+            Label stat2Label = new Label();
+            stat2Label.Content = "Stat2";
+            Label stat2amountLabel = new Label();
+            stat2amountLabel.Content = "Stat2 amount";
+            Label stat3Label = new Label();
+            stat3Label.Content = "Stat3";
+            Label stat3amountLabel = new Label();
+            stat3amountLabel.Content = "Stat3 amount";
+            Label slotLabel = new Label();
+            slotLabel.Content = "Slot";
+            Label materialLabel = new Label();
+            materialLabel.Content = "Material";
+            Button modifyItem = new Button();
+            modifyItem.Content = "Modify item";
+            modifyItem.Width = 70;
+            modifyItem.HorizontalAlignment = HorizontalAlignment.Left;
+            modifyItem.Margin = new Thickness(0, 15, 5, 5);
+
+            stackPanel.Children.Add(nameLabel);
+            stackPanel.Children.Add(nameBox);
+            nameBox.Text = itemToModify.Name.ToString();
+            stackPanel.Children.Add(stat1Label);
+            stackPanel.Children.Add(stat1ComboBox);
+            stat1ComboBox.SelectedItem = itemToModify.Stat1;
+            stackPanel.Children.Add(stat1amountLabel);
+            stackPanel.Children.Add(stat1amountBox);
+            stat1amountBox.Text = itemToModify.Stat1amount.ToString();
+            stackPanel.Children.Add(stat2Label);
+            stackPanel.Children.Add(stat2ComboBox);
+            stat2ComboBox.SelectedItem = itemToModify.Stat2;
+            stackPanel.Children.Add(stat2amountLabel);
+            stackPanel.Children.Add(stat2amountBox);
+            stat2amountBox.Text = itemToModify.Stat2amount.ToString();
+            stackPanel.Children.Add(stat3Label);
+            stackPanel.Children.Add(stat3ComboBox);
+            stat3ComboBox.SelectedItem = itemToModify.Stat3;
+            stackPanel.Children.Add(stat3amountLabel);
+            stackPanel.Children.Add(stat3amountBox);
+            stat3amountBox.Text = itemToModify.Stat3amount.ToString();
+            stackPanel.Children.Add(slotLabel);
+            stackPanel.Children.Add(slotBox);
+            slotBox.SelectedItem = itemToModify.Slot;
+            stackPanel.Children.Add(materialLabel);
+            materialBox.Text = convertMaterialBack(itemToModify);
+            stackPanel.Children.Add(materialBox);
+            stackPanel.Children.Add(modifyItem);
+            stackPanel.Children.Add(label);
+            stackPanel.Children.Add(cancelButton);
+
+            modifyItem.Click += ModifyItem_Click;
+        }
+
+        private async void ModifyItem_Click(object sender, RoutedEventArgs e)
+        {
+            Item itemToModify = (Item)listBox.SelectedItem;
+            if (statAmountsTry() && statChoiceTry() && slotTry() && materialTry())
+            {
+                materialConvert();
+                var values = new Dictionary<String, String> // is this prone to SQL injection? -- TODO: test
+                {
+                    {"name", nameBox.Text },
+                    {"stat1", stat1ComboBox.Text },
+                    {"stat1amount", stat1amountBox.Text },
+                    {"stat2", stat2ComboBox.Text },
+                    {"stat2amount", stat2amountBox.Text },
+                    {"stat3", stat3ComboBox.Text },
+                    {"stat3amount", stat3amountBox.Text },
+                    {"slot", slotBox.Text },
+                    {"material", material.ToString() }
+                };
+                FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+
+                String url = itemUrl + "/" + itemToModify.Id;
+
+                HttpResponseMessage response = await client.PutAsync(url, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    successLabel();
+                }
+                else
+                {
+                    label.Content = "Failed to modify item. Please try again.";
+                }
+            }
+        }
+
+        private String convertMaterialBack(Item itemToModify)
+        {
+            String materialToReturn = "";
+            if (itemToModify.Material == 1)
+            {
+                materialToReturn = "cloth";
+            }
+            else if (itemToModify.Material == 2)
+            {
+                materialToReturn = "leather";
+            }
+            else
+            {
+                materialToReturn = "plate";
+            }
+            return materialToReturn;
+        }
+
+        private void modifyUser()
+        {
+            addCancelButton();
+            stackPanel.Children.Add(cancelButton);
         }
     }
 }
+// TODO: make/remove as admin button when user is selected + are you sure? + put user to change admin status
+
+// TODO: update item, update user, login/authentication, make/remove as admin button -- new user -> can register on the website
+
+// a modifyról a newra és vissza a modifyra megmarad a kijelölés (is this a problem?)
+
+// TODO: cancel button shows the last open page instead of the "opening" (empty) page
