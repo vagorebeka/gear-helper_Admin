@@ -23,12 +23,15 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="1" x:Name="stackPanel">
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="2" Grid.RowSpan="2">
+        <StackPanel Grid.Row="1" Grid.Column="2">
             <Button x:Name="newItemBtn" Content="New Item" Click="newItem_Click" Margin="5, 5, 5, 5"/>
             <Button x:Name="modifytBtn" Content="Modify" Margin="5, 5, 5, 5"/>
-            <Button x:Name="deleteBtn" Content="Delete" Margin="5, 5, 5, 5"/>
+            <Button x:Name="deleteBtn" Content="Delete" Click="deleteBtn_Click" Margin="5, 5, 5, 5"/>
             <Label x:Name="lblName" Margin="2" FontSize="20"/>
             <Label x:Name="lblEmail" Margin="2" FontSize="20"/>
+                <Label x:Name="labelRight" Margin="2" FontSize="20"/>
+            <StackPanel Grid.Row="1" Grid.Column="2"  x:Name="stackPanelRight">
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

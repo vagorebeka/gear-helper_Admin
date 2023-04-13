@@ -236,7 +236,7 @@ namespace GearHelper_Admin
             if (statAmountsTry() && statChoiceTry() && nameTry() && slotTry() && materialTry())
             {
                 materialConvert();
-                var values = new Dictionary<String, String>
+                var values = new Dictionary<String, String> // is this prone to SQL injection? -- TODO: test
                 {
                     {"name", nameBox.Text },
                     {"stat1", stat1ComboBox.Text },
@@ -388,5 +388,80 @@ namespace GearHelper_Admin
             addItem.Click += addItem_Click;
         }
 
+        private async void delete(object o)
+        {
+            // TODO: find and delete the item on localhost using the id of the item in the listbox and html crud
+            try
+            {
+                Item itemToDelete = (Item)o;
+                using (client)
+                {
+                    String address = itemUrl + "/" + itemToDelete.Id.ToString();
+                    HttpResponseMessage response = await client.DeleteAsync(address);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        labelRight.Content = String.Format("Item {0}\ndeleted", itemToDelete.Id);
+                        listItems();
+                    }
+                    else
+                    {
+                        labelRight.Content = "Failed to delete.\nPlease try again.";
+                    }
+                }
+            } catch
+            {
+                User userToDelete = (User)o;
+                int userId = userToDelete.Id;
+                using (client)
+                {
+                    String address = userUrl + "/" + userId.ToString();
+                    HttpResponseMessage response = await client.DeleteAsync(address);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        labelRight.Content = String.Format("User {0}\ndeleted", userToDelete.Id);
+                        successLabel();
+                    }
+                    else
+                    {
+                        labelRight.Content = "Failed to delete.\nPlease try again.";
+                    }
+                }
+            }
+            
+
+            listItems();
+        }
+
+        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TextBlock textBlock = new TextBlock();
+            textBlock.Text = "Are you sure?";
+            textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+            stackPanelRight.Children.Add(textBlock);
+            Button yes = new Button();
+            yes.Content = "YES";
+            yes.Width = 50;
+            yes.Margin = new Thickness(5,5,5,5);
+            Button no = new Button();
+            no.Content = "NO";
+            no.Width = 50;
+            no.Margin = new Thickness(5, 5, 5, 5);
+            stackPanelRight.Children.Add(yes);
+            stackPanelRight.Children.Add(no);
+            yes.Click += Yes_Click;
+            no.Click += No_Click;
+        }
+
+        private void No_Click(object sender, RoutedEventArgs e)
+        {
+            stackPanelRight.Children.Clear();
+        }
+
+        private void Yes_Click(object sender, RoutedEventArgs e)
+        {
+            stackPanelRight.Children.Clear();
+
+            delete(listBox.SelectedItem);
+        }
     }
 }
