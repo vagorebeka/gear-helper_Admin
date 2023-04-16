@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 
 namespace GearHelper_Admin
@@ -39,6 +41,9 @@ namespace GearHelper_Admin
         ComboBox slotBox = new ComboBox();
         ComboBox materialBox = new ComboBox();
         int material = 0;
+
+        TextBox emailBox = new TextBox();
+        CheckBox isAdminBox = new CheckBox();
 
         Label label = new Label();
         Button cancelButton = new Button();
@@ -484,6 +489,7 @@ namespace GearHelper_Admin
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             stackPanel.Children.Clear();
+            stackPanel.Children.Add(defaultText);
         }
 
         private void modifytBtn_Click(object sender, RoutedEventArgs e)
@@ -629,15 +635,118 @@ namespace GearHelper_Admin
 
         private void modifyUser()
         {
+            User userToModify = (User)listBox.SelectedItem;
+            stackPanel.Children.Clear();
             addCancelButton();
+
+            Label nameLabel = new Label();
+            nameLabel.Content = "username";
+            nameBox.Text = userToModify.Name;
+            nameBox.IsEnabled = false;
+            Label emailLabel = new Label();
+            emailLabel.Content = "email";
+            emailBox.Text = userToModify.Email;
+            Label isAdminLabel = new Label();
+            isAdminLabel.Content = "admin";
+            if (userToModify.Admin)
+            {
+                isAdminBox.IsChecked = true;
+            }
+            else
+            {
+                isAdminBox.IsChecked = false;
+            }
+            Button modifyUser = new Button();
+            modifyUser.Content = "Modify user";
+            modifyUser.Width = 70;
+            modifyUser.HorizontalAlignment = HorizontalAlignment.Left;
+            modifyUser.Margin = new Thickness(0, 15, 5, 5);
+
+            stackPanel.Children.Add(nameLabel);
+            stackPanel.Children.Add(nameBox);
+            stackPanel.Children.Add(emailLabel);
+            stackPanel.Children.Add(emailBox);
+            stackPanel.Children.Add(isAdminLabel);
+            stackPanel.Children.Add(isAdminBox);
+            stackPanel.Children.Add(modifyUser);
             stackPanel.Children.Add(cancelButton);
+            stackPanel.Children.Add(label);
+
+            modifyUser.Click += ModifyUser_Click;
+        }
+
+        private async void ModifyUser_Click(object sender, RoutedEventArgs e)
+        {
+            User userToModify = (User)listBox.SelectedItem;
+            /*int isAdmin = 0;
+            if ((bool)isAdminBox.IsChecked)
+            {
+                isAdmin = 1;
+            }*/
+            var values = new Dictionary<String, String> // is this prone to SQL injection? -- TODO: test
+                {
+                    {"name", userToModify.Name },
+                    {"email", emailBox.Text },
+                    {"password", userToModify.Password },
+                    {"admin", isAdminBox.ToString() } // if isAdmin is used instead of isAdminBox, the request returns error 500
+            };
+            String jsonData = JsonConvert.SerializeObject(values);
+
+
+
+            // SetupHttpClient
+            client.BaseAddress = new Uri(userUrl + "/" + userToModify.Id.ToString());
+            //client.DefaultRequestHeaders.Add(new MediaTypeWithQualityHeaderValue("Accept", "application/json"));
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "baseAddress");
+            request.Content = new StringContent(jsonData,
+                                                Encoding.UTF8,
+                                                "application/json");//CONTENT-TYPE header
+
+            HttpResponseMessage response = await client.SendAsync(request);
+
+            // This is the important bit
+            /*var requestUri = QueryHelpers.AddQueryString(baseAddress, values);
+
+            var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
+            // Setup headers for Content-Type
+            request.Headers.Add("Accept", "application/json");
+            // Add body content
+            request.Content = new StringContent(
+                jsonData,
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            // Send the request
+            HttpResponseMessage response = await client.SendAsync(request);
+
+            /*FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+
+            String url = userUrl + "/" + userToModify.Id.ToString();
+            HttpResponseMessage response = await client.PutAsync(url, content);*/
+
+            if (response.IsSuccessStatusCode)
+            {
+                label.Content = "Success";
+            }
+            else
+            {
+                label.Content = response;
+            }
         }
     }
-}
+    }
+
 // TODO: make/remove as admin button when user is selected + are you sure? + put user to change admin status
 
-// TODO: update item, update user, login/authentication, make/remove as admin button -- new user -> can register on the website
+// TODO: update user, login/authentication, make/remove as admin button -- new user -> can register on the website
 
 // a modifyról a newra és vissza a modifyra megmarad a kijelölés (is this a problem?)
 
 // TODO: cancel button shows the last open page instead of the "opening" (empty) page
+
+// TODO: user saját magát nem törölheti
+
+// TODO: modify item -> success -> modify item - combobox items arent cleared
+
+// TODO: modify ugyanarra a névre mint másik item - csak hibát dob, explain

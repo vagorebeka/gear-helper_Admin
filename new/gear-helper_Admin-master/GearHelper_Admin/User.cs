@@ -10,32 +10,33 @@ namespace GearHelper_Admin
     internal class User
     {
         private int id;
-        private String username;
+        private String name;
         private String email;
         private String password;
         private bool admin;
 
-        public User(int id, string username, string email, string password)
+        public User(int id, String name, String email, String password, bool admin)
         {
             this.id = id;
-            this.username = username;
+            this.name = name;
             this.email = email;
             this.password = password;
+            this.admin = admin;
         }
 
 
         [JsonProperty("id")]
         public int Id { get => id; set => id = value; }
-        [JsonProperty("username")]
-        public string Username { get => username; set => username = value; }
+        [JsonProperty("name")]
+        public String Name { get => name; set => name = value; }
         [JsonProperty("email")]
-        public string Email { get => email; set => email = value; }
+        public String Email { get => email; set => email = value; }
         [JsonProperty("password")]
-        public string Password { get => password; set => password = value; }
+        public String Password { get => password; set => password = value; }
         [JsonProperty("admin")]
         public bool Admin { get => admin; set => admin = value; }
 
-        public override string ToString()
+        public override String ToString()
         {
             String isAdmin = "";
             if (this.admin)
@@ -46,7 +47,7 @@ namespace GearHelper_Admin
             {
                 isAdmin = "no";
             }
-            return String.Format("{0,-3} {1,-15} {2,-35} {3,-5}",this.id, this.username, this.email, isAdmin);
+            return String.Format("{0,-3} {1,-15} {2,-35} {3,-5}",this.id, this.name, this.email, isAdmin);
         }
     }
 }
