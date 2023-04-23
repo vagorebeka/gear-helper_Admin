@@ -26,10 +26,9 @@ namespace GearHelper_Admin
     public partial class MainWindow : Window
     {
         private static readonly HttpClient client = new HttpClient();
-        private string itemUrl = "http://localhost:8000/api/item";
-        private string userUrl = "http://localhost:8000/api/user";
+        private readonly string itemUrl = "http://localhost:8000/api/item";
+        private readonly string userUrl = "http://localhost:8000/api/user";
         ListBox listBox = new ListBox();
-        //String connectionString = "Server=localhost;Database=gear-helper;User ID=root";
 
         TextBox nameBox = new TextBox();
         TextBox stat1amountBox = new TextBox();
@@ -50,10 +49,15 @@ namespace GearHelper_Admin
 
         List<String> itemNameList = new List<String>();
 
+        MessageBoxButton okButton = MessageBoxButton.OK;
+        String errorCaption = "Error";
+
         public MainWindow()
         {
             InitializeComponent();
         }
+
+        // GENERAL
 
         private List<String> itemNamesToList()
         {
@@ -77,14 +81,6 @@ namespace GearHelper_Admin
             listBox.FontFamily = new FontFamily("Consolas");
         }
 
-        private void successLabel()
-        {
-            stackPanel.Children.Clear();
-            Label successLabel = new Label();
-            successLabel.Content = "Success";
-            stackPanel.Children.Add(successLabel);
-        }
-
         private void addCancelButton()
         {
             cancelButton.Content = "Cancel";
@@ -92,6 +88,94 @@ namespace GearHelper_Admin
             cancelButton.HorizontalAlignment = HorizontalAlignment.Left;
             cancelButton.Margin = new Thickness(0, 5, 5, 5);
             cancelButton.Click += CancelButton_Click;
+        }
+        
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            stackPanel.Children.Clear();
+            stackPanel.Children.Add(defaultText);
+        }
+        
+        // MESSAGEBOXES
+
+        private void nothingSelected()
+        {
+            String message = "Please choose an item or user";
+            String caption = "Error";
+            MessageBox.Show(message, caption, okButton);
+        }
+
+        private void somethingWentWrong()
+        {
+            String message = "Something went wrong. Please try again";
+            MessageBox.Show(message, errorCaption, okButton);
+        }
+
+        private void exitButton_Click(object sender, RoutedEventArgs e)
+        {
+            String message = "Are you sure?";
+            String caption = "Exit";
+            MessageBoxButton yesNoButton = MessageBoxButton.YesNo;
+            if (MessageBox.Show(message, caption, yesNoButton) == MessageBoxResult.Yes)
+            {
+                Application.Current.Shutdown();
+            }
+        }
+
+        // FORMS
+
+        private void comboBoxAddItems()
+        {
+            // TODO: add statistic class and clean up this code
+            stat1ComboBox.Items.Add("AGI");
+            stat1ComboBox.Items.Add("INT");
+            stat1ComboBox.Items.Add("STA");
+            stat1ComboBox.Items.Add("STR");
+            stat1ComboBox.Items.Add("SPI");
+            stat2ComboBox.Items.Add("AGI");
+            stat2ComboBox.Items.Add("INT");
+            stat2ComboBox.Items.Add("STA");
+            stat2ComboBox.Items.Add("STR");
+            stat2ComboBox.Items.Add("SPI");
+            stat3ComboBox.Items.Add("AGI");
+            stat3ComboBox.Items.Add("INT");
+            stat3ComboBox.Items.Add("STA");
+            stat3ComboBox.Items.Add("STR");
+            stat3ComboBox.Items.Add("SPI");
+
+            slotBox.Items.Add("head");
+            slotBox.Items.Add("torso");
+            slotBox.Items.Add("legs");
+
+            materialBox.Items.Add("cloth");
+            materialBox.Items.Add("leather");
+            materialBox.Items.Add("plate");
+        }
+
+        private void clearItemForm()
+        {
+            nameBox.Clear();
+            stat1ComboBox.Items.Clear();
+            stat2ComboBox.Items.Clear();
+            stat3ComboBox.Items.Clear();
+            stat1amountBox.Clear();
+            stat2amountBox.Clear();
+            stat3amountBox.Clear();
+            slotBox.Items.Clear();
+            materialBox.Items.Clear();
+        }
+        
+        // LIST
+
+        private void itemList_Click(object sender, RoutedEventArgs e)
+        {
+            clearItemForm();
+            listItems();
+        }
+        
+        private void userList_Click(object sender, RoutedEventArgs e)
+        {
+            listUsers();
         }
 
         private void listItems()
@@ -126,217 +210,8 @@ namespace GearHelper_Admin
             }
         }
 
-        private void userList_Click(object sender, RoutedEventArgs e)
-        {
-            clearAddItem();
-            listUsers();
-        }
-
-        private void itemList_Click(object sender, RoutedEventArgs e)
-        {
-            clearAddItem();
-            listItems();
-        }
-
-        private bool statAmountsTry()
-        {
-            bool num = true;
-            try
-            {
-                int.Parse(stat1amountBox.Text);
-            }
-            catch
-            {
-                label.Content = "Please add a numeric value to stat 1 amount";
-                num = false;
-            }
-            try
-            {
-                int.Parse(stat2amountBox.Text);
-            }
-            catch
-            {
-                label.Content = "Please add a numeric value to stat 2 amount";
-                num = false;
-            }
-            try
-            {
-                int.Parse(stat3amountBox.Text);
-            }
-            catch
-            {
-                label.Content = "Please add a numeric value to stat 3 amount";
-                num = false;
-            }
-            return num;
-        }
-
-        private bool statChoiceTry()
-        {
-            bool ok = true;
-            if (stat1ComboBox.Text == "" || stat2ComboBox.Text == "" || stat3ComboBox.Text == "")
-            {
-                ok = false;
-                label.Content = "Please choose all three statistics";
-            }
-            else if (stat1ComboBox.Text == stat2ComboBox.Text || stat1ComboBox.Text == stat3ComboBox.Text || stat2ComboBox.Text == stat3ComboBox.Text)
-            {
-                ok = false;
-                label.Content = "Please choose three different statistics";
-            }
-            return ok;
-        }
-
-        private bool nameTry()
-        {
-            bool nameOk = true;
-            if (nameBox.Text == "")
-            {
-                nameOk = false;
-                label.Content = "Please add the name of the item";
-            }
-            else if (itemNamesToList().Contains(nameBox.Text.ToLower().Trim()))
-            {
-                nameOk = false;
-                label.Content = "Please add a unique item name, an item with this name already exists in the database";
-            }
-            return nameOk;
-        }
-
-        private bool slotTry()
-        {
-            bool slotOk = true;
-            if (slotBox.Text == "")
-            {
-                slotOk = false;
-                label.Content = "Please choose a slot";
-            }
-            return slotOk;
-        }
-
-        private bool materialTry()
-        {
-            bool materialOk = true;
-            if (materialBox.Text == "")
-            {
-                materialOk = false;
-                label.Content = "Please choose a material";
-            }
-            return materialOk;
-        }
-
-        private int materialConvert()
-        {
-            if (materialBox.Text == "cloth")
-            {
-                material = 1;
-            }
-            else if (materialBox.Text == "leather")
-            {
-                material = 2;
-            }
-            else
-            {
-                material = 3;
-            }
-            return material;
-        }
-
-        private async void addItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (statAmountsTry() && statChoiceTry() && nameTry() && slotTry() && materialTry())
-            {
-                materialConvert();
-                var values = new Dictionary<String, String> // is this prone to SQL injection? -- TODO: test
-                {
-                    {"name", nameBox.Text },
-                    {"stat1", stat1ComboBox.Text },
-                    {"stat1amount", stat1amountBox.Text },
-                    {"stat2", stat2ComboBox.Text },
-                    {"stat2amount", stat2amountBox.Text },
-                    {"stat3", stat3ComboBox.Text },
-                    {"stat3amount", stat3amountBox.Text },
-                    {"slot", slotBox.Text },
-                    {"material", material.ToString() }
-                };
-                FormUrlEncodedContent content = new FormUrlEncodedContent(values);
-
-                HttpResponseMessage response = await client.PostAsync(itemUrl, content);
-
-                //String responseString = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    //label.Content = "OK";
-                    successLabel();
-                }
-                else
-                {
-                    label.Content = "Failed to add item. Please try again.";
-                }
-                /*using (var conn = new SqlConnection(connectionString))
-                using (var cmd = conn.CreateCommand())
-                {
-                    conn.Open();
-                    cmd.CommandText = @"INSERT INTO items Values (@name, @stat1, @stat1amount, @stat2, @stat2amount, @stat3, @stat3amount, @slot, @material";
-
-                    cmd.Parameters.AddWithValue("@name", nameBox.Text);
-                    cmd.Parameters.AddWithValue("@stat1", stat1ComboBox.Text);
-                    cmd.Parameters.AddWithValue("@stat1amount", int.Parse(stat1amountBox.Text));
-                    cmd.Parameters.AddWithValue("@stat2", stat2ComboBox.Text);
-                    cmd.Parameters.AddWithValue("@stat2amount", int.Parse(stat2amountBox.Text));
-                    cmd.Parameters.AddWithValue("@stat3", stat3ComboBox.Text);
-                    cmd.Parameters.AddWithValue("@stat3amount", int.Parse(stat3amountBox.Text));
-                    cmd.Parameters.AddWithValue("@slot", slotBox.Text);
-                    cmd.Parameters.AddWithValue("@material", material);
-
-                    cmd.ExecuteNonQuery();
-                }*/
-                //successLabel();
-            }
-        }
-
-        private void comboBoxAddItems()
-        {
-            // TODO: add statistic class and clean up this code
-            stat1ComboBox.Items.Add("AGI");
-            stat1ComboBox.Items.Add("INT");
-            stat1ComboBox.Items.Add("STA");
-            stat1ComboBox.Items.Add("STR");
-            stat1ComboBox.Items.Add("SPI");
-            stat2ComboBox.Items.Add("AGI");
-            stat2ComboBox.Items.Add("INT");
-            stat2ComboBox.Items.Add("STA");
-            stat2ComboBox.Items.Add("STR");
-            stat2ComboBox.Items.Add("SPI");
-            stat3ComboBox.Items.Add("AGI");
-            stat3ComboBox.Items.Add("INT");
-            stat3ComboBox.Items.Add("STA");
-            stat3ComboBox.Items.Add("STR");
-            stat3ComboBox.Items.Add("SPI");
-
-            slotBox.Items.Add("head");
-            slotBox.Items.Add("torso");
-            slotBox.Items.Add("legs");
-
-            materialBox.Items.Add("cloth");
-            materialBox.Items.Add("leather");
-            materialBox.Items.Add("plate");
-        }
-
-        private void clearAddItem()
-        {
-            nameBox.Clear();
-            stat1ComboBox.Items.Clear();
-            stat2ComboBox.Items.Clear();
-            stat3ComboBox.Items.Clear();
-            stat1amountBox.Clear();
-            stat2amountBox.Clear();
-            stat3amountBox.Clear();
-            slotBox.Items.Clear();
-            materialBox.Items.Clear();
-        }
-
+        // ADD
+        
         private void newItem_Click(object sender, RoutedEventArgs e)
         {
             stackPanel.Children.Clear();
@@ -367,10 +242,9 @@ namespace GearHelper_Admin
             addItem.HorizontalAlignment = HorizontalAlignment.Left;
             addItem.Margin = new Thickness(0,15,5,5);
 
-            //stat1amountBox.PreviewTextInput += new TextCompositionEventHandler(NumberValidation());
-
             stackPanel.Children.Add(nameLabel);
             nameBox.Text = "";
+            nameBox.IsEnabled = true;
             stackPanel.Children.Add(nameBox);
             stackPanel.Children.Add(stat1Label);
             stat1ComboBox.SelectedItem = null;
@@ -402,103 +276,163 @@ namespace GearHelper_Admin
 
             addItem.Click += addItem_Click;
         }
-
-        private async void delete(object o)
+        
+        private async void addItem_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (nameTry() && statChoiceTry() && statAmountsTry() && slotTry() && materialTry())
             {
-                Item itemToDelete = (Item)o;
-                using (client)
+                materialConvert();
+                var values = new Dictionary<String, String>
                 {
-                    String address = itemUrl + "/" + itemToDelete.Id.ToString();
-                    HttpResponseMessage response = await client.DeleteAsync(address);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        labelRight.Content = String.Format("Item #{0}\ndeleted", itemToDelete.Id);
-                        listItems();
-                    }
-                    else
-                    {
-                        labelRight.Content = "Failed to delete.\nPlease try again.";
-                    }
+                    {"name", nameBox.Text },
+                    {"stat1", stat1ComboBox.Text },
+                    {"stat1amount", stat1amountBox.Text },
+                    {"stat2", stat2ComboBox.Text },
+                    {"stat2amount", stat2amountBox.Text },
+                    {"stat3", stat3ComboBox.Text },
+                    {"stat3amount", stat3amountBox.Text },
+                    {"slot", slotBox.Text },
+                    {"material", material.ToString() }
+                };
+                FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+
+                HttpResponseMessage response = await client.PostAsync(itemUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    String message = "Item added";
+                    String caption = "Success";
+                    MessageBox.Show(message, caption, okButton);
+                    clearItemForm();
+                    listItems();
                 }
-            } catch
-            {
-                User userToDelete = (User)o;
-                int userId = userToDelete.Id;
-                using (client)
+                else
                 {
-                    String address = userUrl + "/" + userId.ToString();
-                    HttpResponseMessage response = await client.DeleteAsync(address);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        labelRight.Content = String.Format("User #{0}\ndeleted", userToDelete.Id);
-                        successLabel();
-                    }
-                    else
-                    {
-                        labelRight.Content = "Failed to delete.\nPlease try again.";
-                    }
+                    somethingWentWrong();
                 }
             }
-            
-
-            listItems();
         }
 
-        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        private bool statChoiceTry()
         {
-            if (listBox.SelectedItem != null)
+            bool ok = true;
+            if (stat1ComboBox.Text == "" || stat2ComboBox.Text == "" || stat3ComboBox.Text == "")
             {
-                TextBlock textBlock = new TextBlock();
-                textBlock.Text = "Are you sure?";
-                textBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                stackPanelRight.Children.Add(textBlock);
-                Button yes = new Button();
-                yes.Content = "YES";
-                yes.Width = 50;
-                yes.Margin = new Thickness(5,5,5,5);
-                Button no = new Button();
-                no.Content = "NO";
-                no.Width = 50;
-                no.Margin = new Thickness(5, 5, 5, 5);
-                stackPanelRight.Children.Add(yes);
-                stackPanelRight.Children.Add(no);
-                yes.Click += Yes_Click;
-                no.Click += No_Click;
+                ok = false;
+                String message = "Please choose all three statistics";
+                MessageBox.Show(message, errorCaption, okButton);
+            }
+            else if (stat1ComboBox.Text == stat2ComboBox.Text || stat1ComboBox.Text == stat3ComboBox.Text || stat2ComboBox.Text == stat3ComboBox.Text)
+            {
+                ok = false;
+                String message = "Please choose three different statistics";
+                MessageBox.Show(message, errorCaption, okButton);
+            }
+            return ok;
+        }
+        
+        private bool statAmountsTry()
+        {
+            bool num = true;
+            try
+            {
+                int.Parse(stat1amountBox.Text);
+            }
+            catch
+            {
+                num = false;
+                String message = "Please add a numeric value to stat 1 amount";
+                MessageBox.Show(message, errorCaption, okButton);
+            }
+            try
+            {
+                int.Parse(stat2amountBox.Text);
+            }
+            catch
+            {
+                num = false;
+                String message = "Please add a numeric value to stat 2 amount";
+                MessageBox.Show(message, errorCaption, okButton);
+            }
+            try
+            {
+                int.Parse(stat3amountBox.Text);
+            }
+            catch
+            {
+                num = false;
+                String message = "Please add a numeric value to stat 3 amount";
+                MessageBox.Show(message, errorCaption, okButton);
+            }
+            return num;
+        }
+
+        private bool nameTry()
+        {
+            bool nameOk = true;
+            if (nameBox.Text == "")
+            {
+                nameOk = false;
+                String message = "Please add the name of the item";
+                MessageBox.Show(message, errorCaption, okButton);
+            }
+            else if (itemNamesToList().Contains(nameBox.Text.ToLower().Trim()))
+            {
+                nameOk = false;
+                String message = "Please add a unique item name, an item with this name already exists in the database";
+                MessageBox.Show(message, errorCaption, okButton);
+            }
+            return nameOk;
+        }
+
+        private bool slotTry()
+        {
+            bool slotOk = true;
+            if (slotBox.Text == "")
+            {
+                slotOk = false;
+                String message = "Please choose a slot";
+                MessageBox.Show(message, errorCaption, okButton);
+            }
+            return slotOk;
+        }
+
+        private bool materialTry()
+        {
+            bool materialOk = true;
+            if (materialBox.Text == "")
+            {
+                materialOk = false;
+                String message = "Please choose a material";
+                MessageBox.Show(message, errorCaption, okButton);
+            }
+            return materialOk;
+        }
+
+        private int materialConvert()
+        {
+            if (materialBox.Text == "cloth")
+            {
+                material = 1;
+            }
+            else if (materialBox.Text == "leather")
+            {
+                material = 2;
             }
             else
             {
-                stackPanel.Children.Clear();
-                label.Content = "Please choose an item or user";
-                stackPanel.Children.Add(label);
+                material = 3;
             }
+            return material;
         }
 
-        private void No_Click(object sender, RoutedEventArgs e)
-        {
-            stackPanelRight.Children.Clear();
-        }
-
-        private void Yes_Click(object sender, RoutedEventArgs e)
-        {
-            stackPanelRight.Children.Clear();
-            delete(listBox.SelectedItem);
-        }
-
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            stackPanel.Children.Clear();
-            stackPanel.Children.Add(defaultText);
-        }
+        // MODIFY
 
         private void modifytBtn_Click(object sender, RoutedEventArgs e)
-        { // item: opens the add new page with everything already written in but the button says "update" instead of "add" -- user: can change email and admin status
+        {
             if (listBox.SelectedItem == null)
             {
-                stackPanel.Children.Clear();
-                label.Content = "Please choose an item or user";
-                stackPanel.Children.Add(label);
+                nothingSelected();
             }
             else
             {
@@ -549,6 +483,7 @@ namespace GearHelper_Admin
             stackPanel.Children.Add(nameLabel);
             stackPanel.Children.Add(nameBox);
             nameBox.Text = itemToModify.Name.ToString();
+            nameBox.IsEnabled = true;
             stackPanel.Children.Add(stat1Label);
             stackPanel.Children.Add(stat1ComboBox);
             stat1ComboBox.SelectedItem = itemToModify.Stat1;
@@ -583,10 +518,10 @@ namespace GearHelper_Admin
         private async void ModifyItem_Click(object sender, RoutedEventArgs e)
         {
             Item itemToModify = (Item)listBox.SelectedItem;
-            if (statAmountsTry() && statChoiceTry() && slotTry() && materialTry())
+            if (nameTry() && statChoiceTry() && statAmountsTry() && slotTry() && materialTry())
             {
                 materialConvert();
-                var values = new Dictionary<String, String> // is this prone to SQL injection? -- TODO: test
+                var values = new Dictionary<String, String>
                 {
                     {"name", nameBox.Text },
                     {"stat1", stat1ComboBox.Text },
@@ -606,31 +541,17 @@ namespace GearHelper_Admin
 
                 if (response.IsSuccessStatusCode)
                 {
-                    successLabel();
+                    String message = "Item successfully modified";
+                    String caption = "Success";
+                    MessageBox.Show(message, caption, okButton);
+                    clearItemForm();
+                    listItems();
                 }
                 else
                 {
-                    label.Content = "Failed to modify item. Please try again.";
+                    somethingWentWrong();
                 }
             }
-        }
-
-        private String convertMaterialBack(Item itemToModify)
-        {
-            String materialToReturn = "";
-            if (itemToModify.Material == 1)
-            {
-                materialToReturn = "cloth";
-            }
-            else if (itemToModify.Material == 2)
-            {
-                materialToReturn = "leather";
-            }
-            else
-            {
-                materialToReturn = "plate";
-            }
-            return materialToReturn;
         }
 
         private void modifyUser()
@@ -684,7 +605,7 @@ namespace GearHelper_Admin
                 isAdmin = "1";
             }
 
-            var values = new Dictionary<String, string> // is this prone to SQL injection? -- TODO: test
+            var values = new Dictionary<String, string>
                 {
                     {"email", emailBox.Text },
                     {"admin", isAdmin }
@@ -697,39 +618,109 @@ namespace GearHelper_Admin
 
             if (response.IsSuccessStatusCode)
             {
-                successLabel();
+                String message = "User successfully modified";
+                String caption = "Success";
+                MessageBox.Show(message, caption, okButton);
+                listUsers();
             }
             else
             {
-                label.Content = response;
+                somethingWentWrong();
             }
         }
-
-        private void exitButton_Click(object sender, RoutedEventArgs e)
+        
+        private String convertMaterialBack(Item itemToModify)
         {
-            System.Windows.Application.Current.Shutdown();
+            String materialToReturn = "";
+            if (itemToModify.Material == 1)
+            {
+                materialToReturn = "cloth";
+            }
+            else if (itemToModify.Material == 2)
+            {
+                materialToReturn = "leather";
+            }
+            else
+            {
+                materialToReturn = "plate";
+            }
+            return materialToReturn;
+        }
+
+        // DELETE
+
+        private async void delete(object o)
+        {
+            String message;
+            String successCaption = "Success";
+            try
+            {
+                Item itemToDelete = (Item)o;
+                using (client)
+                {
+                    String address = itemUrl + "/" + itemToDelete.Id.ToString();
+                    HttpResponseMessage response = await client.DeleteAsync(address);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        message = String.Format("Item #{0} deleted", itemToDelete.Id);
+                        MessageBox.Show(message, successCaption, okButton);
+                        listItems();
+                    }
+                    else
+                    {
+                        somethingWentWrong();
+                    }
+                }
+                listItems();
+            } catch
+            {
+                User userToDelete = (User)o;
+                int userId = userToDelete.Id;
+                using (client)
+                {
+                    String address = userUrl + "/" + userId.ToString();
+                    HttpResponseMessage response = await client.DeleteAsync(address);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        message = String.Format("User #{0} deleted", userToDelete.Id);
+                        MessageBox.Show(message, successCaption, okButton);
+                        listUsers();
+                    }
+                    else
+                    {
+                        somethingWentWrong();
+                    }
+                }
+            }
+            listUsers();
+        }
+
+        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            String message;
+            String caption;
+            if (listBox.SelectedItem != null)
+            {
+                message = "Are you sure?";
+                caption = "Delete";
+                MessageBoxButton yesNoButton = MessageBoxButton.YesNo;
+                if (MessageBox.Show(message, caption, yesNoButton) == MessageBoxResult.Yes)
+                {
+                    delete(listBox.SelectedItem);
+                }
+            }
+            else
+            {
+                nothingSelected();
+            }
         }
     }
     }
 
-// TODO: make/remove as admin button when user is selected + are you sure? + put user to change admin status
-
-// TODO: update user, login/authentication, make/remove as admin button -- new user -> can register on the website
+// TODO?: make/remove as admin button when user is selected + are you sure? + put user to change admin status
 
 // a modifyról a newra és vissza a modifyra megmarad a kijelölés (is this a problem?)
 
-// TODO: cancel button shows the last open page instead of the "opening" (empty) page
-
 // TODO: user saját magát nem törölheti
-
-// TODO: modify item -> success -> modify item - combobox items arent cleared
-
-// TODO: modify ugyanarra a névre mint másik item - csak hibát dob, explain
-
-// TODO: modify user után a modify itemnél a namebox legyen elérhető
-
-// TODO: item delete után a jobb oldali label ne maradjon ott -> label helyett messagebox
-
-// label helyett messagebox
 
 // backend: idegen kulcsok

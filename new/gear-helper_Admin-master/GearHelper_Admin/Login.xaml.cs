@@ -33,25 +33,8 @@ namespace GearHelper_Admin
 
         private async void ValidateUser()
         {
-            /*var values = new Dictionary<String, String> // is this prone to SQL injection? -- TODO: test
-            {
-                {"name", usernameBox.Text },
-                {"password", passwordBox.Text }
-            };
-
-            FormUrlEncodedContent content = new FormUrlEncodedContent(values);
-
-            Uri loginUri = new Uri("http://localhost:8000/api/login");
-            HttpResponseMessage response = await client.PostAsync(loginUri, content);*/
-
-            string query = "SELECT admin from users WHERE name = @name and password=@password";
+            string query = "SELECT admin from users WHERE name=@name and password=@password";
             bool admin = false;
-            /*SqlConnectionStringBuilder connStr = new SqlConnectionStringBuilder()
-            {
-                Data Source = "localhost";
-            InitialCatalog = "gear-helper";
-            UserID = "root";
-            }.ConnectionString;*/
             using (MySqlConnection con = new MySqlConnection("Server=localhost;Port=3306;User ID=username;Password=password;Database=gear-helper;")) //created a user with this data in phpmyadmin
             {
                 using (MySqlCommand sqlcmd = new MySqlCommand(query, con))
@@ -67,6 +50,7 @@ namespace GearHelper_Admin
                     con.Close();
                 }
             }
+
             if (admin)
             {
                 MainWindow mainWindow = new MainWindow();
@@ -77,17 +61,6 @@ namespace GearHelper_Admin
             {
                 infoLabel.Content = "User not authorized";
             }
-            /*if (response.IsSuccessStatusCode)
-            {
-                MainWindow mainWindow = new MainWindow();
-                mainWindow.Show();
-                this.Hide();
-            }
-            else
-            {
-                infoLabel.Content = response;
-                return;
-            }*/
         }
 
         private void loginButton_Click(object sender, RoutedEventArgs e)
