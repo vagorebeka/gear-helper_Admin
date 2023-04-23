@@ -20,6 +20,7 @@
         <StackPanel Grid.Row="1">
             <Button x:Name="userList" Content="User list" Click="userList_Click" Margin="5, 5, 5, 10"/>
             <Button x:Name="itemList" Content="Item list" Click="itemList_Click" Margin="5, 5, 5, 10"/>
+            <Button x:Name="exitButton" Content="Exit" Click="exitButton_Click"  Margin="5, 5, 5, 10"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="1" x:Name="stackPanel">
             <TextBlock x:Name="defaultText" Text="Please choose a list"/>

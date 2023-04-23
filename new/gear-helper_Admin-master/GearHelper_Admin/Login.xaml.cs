@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,15 +23,29 @@ namespace GearHelper_Admin
     /// </summary>
     public partial class Login : Window
     {
+
+        private static readonly HttpClient client = new HttpClient();
+
         public Login()
         {
             InitializeComponent();
         }
 
-        private void ValidateUser()
+        private async void ValidateUser()
         {
-            string query = "SELECT * from tbl_login WHERE name = @name and password=@password";
-            User user;
+            /*var values = new Dictionary<String, String> // is this prone to SQL injection? -- TODO: test
+            {
+                {"name", usernameBox.Text },
+                {"password", passwordBox.Text }
+            };
+
+            FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+
+            Uri loginUri = new Uri("http://localhost:8000/api/login");
+            HttpResponseMessage response = await client.PostAsync(loginUri, content);*/
+
+            string query = "SELECT admin from users WHERE name = @name and password=@password";
+            bool admin = false;
             /*SqlConnectionStringBuilder connStr = new SqlConnectionStringBuilder()
             {
                 Data Source = "localhost";
@@ -44,10 +59,15 @@ namespace GearHelper_Admin
                     sqlcmd.Parameters.Add("@name", MySqlDbType.VarChar).Value = usernameBox.Text;
                     sqlcmd.Parameters.Add("@password", MySqlDbType.VarChar).Value = passwordBox.Text;
                     con.Open();
-                    user = (User)sqlcmd.ExecuteScalar();
+                    Object response = await sqlcmd.ExecuteScalarAsync();
+                    if (response != null)
+                    {
+                        admin = (bool)response;
+                    }
+                    con.Close();
                 }
             }
-            if (user.Admin)
+            if (admin)
             {
                 MainWindow mainWindow = new MainWindow();
                 mainWindow.Show();
@@ -55,9 +75,19 @@ namespace GearHelper_Admin
             }
             else
             {
-                infoLabel.Content = "Incorrect username or password";
-                return;
+                infoLabel.Content = "User not authorized";
             }
+            /*if (response.IsSuccessStatusCode)
+            {
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
+                this.Hide();
+            }
+            else
+            {
+                infoLabel.Content = response;
+                return;
+            }*/
         }
 
         private void loginButton_Click(object sender, RoutedEventArgs e)

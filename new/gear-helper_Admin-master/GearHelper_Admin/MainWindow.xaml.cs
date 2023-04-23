@@ -678,61 +678,36 @@ namespace GearHelper_Admin
         private async void ModifyUser_Click(object sender, RoutedEventArgs e)
         {
             User userToModify = (User)listBox.SelectedItem;
-            /*int isAdmin = 0;
+            String isAdmin = "0";
             if ((bool)isAdminBox.IsChecked)
             {
-                isAdmin = 1;
-            }*/
-            var values = new Dictionary<String, String> // is this prone to SQL injection? -- TODO: test
+                isAdmin = "1";
+            }
+
+            var values = new Dictionary<String, string> // is this prone to SQL injection? -- TODO: test
                 {
-                    {"name", userToModify.Name },
                     {"email", emailBox.Text },
-                    {"password", userToModify.Password },
-                    {"admin", isAdminBox.ToString() } // if isAdmin is used instead of isAdminBox, the request returns error 500
-            };
-            String jsonData = JsonConvert.SerializeObject(values);
+                    {"admin", isAdmin }
+                };
+            FormUrlEncodedContent content = new FormUrlEncodedContent(values);
 
+            String url = userUrl + "/" + userToModify.Id;
 
-
-            // SetupHttpClient
-            client.BaseAddress = new Uri(userUrl + "/" + userToModify.Id.ToString());
-            //client.DefaultRequestHeaders.Add(new MediaTypeWithQualityHeaderValue("Accept", "application/json"));
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, "baseAddress");
-            request.Content = new StringContent(jsonData,
-                                                Encoding.UTF8,
-                                                "application/json");//CONTENT-TYPE header
-
-            HttpResponseMessage response = await client.SendAsync(request);
-
-            // This is the important bit
-            /*var requestUri = QueryHelpers.AddQueryString(baseAddress, values);
-
-            var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
-            // Setup headers for Content-Type
-            request.Headers.Add("Accept", "application/json");
-            // Add body content
-            request.Content = new StringContent(
-                jsonData,
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            // Send the request
-            HttpResponseMessage response = await client.SendAsync(request);
-
-            /*FormUrlEncodedContent content = new FormUrlEncodedContent(values);
-
-            String url = userUrl + "/" + userToModify.Id.ToString();
-            HttpResponseMessage response = await client.PutAsync(url, content);*/
+            HttpResponseMessage response = await client.PutAsync(url, content);
 
             if (response.IsSuccessStatusCode)
             {
-                label.Content = "Success";
+                successLabel();
             }
             else
             {
                 label.Content = response;
             }
+        }
+
+        private void exitButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown();
         }
     }
     }
@@ -750,3 +725,11 @@ namespace GearHelper_Admin
 // TODO: modify item -> success -> modify item - combobox items arent cleared
 
 // TODO: modify ugyanarra a névre mint másik item - csak hibát dob, explain
+
+// TODO: modify user után a modify itemnél a namebox legyen elérhető
+
+// TODO: item delete után a jobb oldali label ne maradjon ott -> label helyett messagebox
+
+// label helyett messagebox
+
+// backend: idegen kulcsok
