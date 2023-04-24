@@ -79,6 +79,7 @@ namespace GearHelper_Admin
             stackPanel.Children.Add(listBox);
             listBox.Name = "listBox";
             listBox.FontFamily = new FontFamily("Consolas");
+            listBox.Height = 500;
         }
 
         private void addCancelButton()
@@ -88,6 +89,7 @@ namespace GearHelper_Admin
             cancelButton.HorizontalAlignment = HorizontalAlignment.Left;
             cancelButton.Margin = new Thickness(0, 5, 5, 5);
             cancelButton.Click += CancelButton_Click;
+            cancelButton.Background = Brushes.MistyRose;
         }
         
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -649,6 +651,26 @@ namespace GearHelper_Admin
 
         // DELETE
 
+        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            String message;
+            String caption;
+            if (listBox.SelectedItem != null)
+            {
+                message = "Are you sure?";
+                caption = "Delete";
+                MessageBoxButton yesNoButton = MessageBoxButton.YesNo;
+                if (MessageBox.Show(message, caption, yesNoButton) == MessageBoxResult.Yes)
+                {
+                    delete(listBox.SelectedItem);
+                }
+            }
+            else
+            {
+                nothingSelected();
+            }
+        }
+
         private async void delete(object o)
         {
             String message;
@@ -693,26 +715,6 @@ namespace GearHelper_Admin
                 }
             }
             listUsers();
-        }
-
-        private void deleteBtn_Click(object sender, RoutedEventArgs e)
-        {
-            String message;
-            String caption;
-            if (listBox.SelectedItem != null)
-            {
-                message = "Are you sure?";
-                caption = "Delete";
-                MessageBoxButton yesNoButton = MessageBoxButton.YesNo;
-                if (MessageBox.Show(message, caption, yesNoButton) == MessageBoxResult.Yes)
-                {
-                    delete(listBox.SelectedItem);
-                }
-            }
-            else
-            {
-                nothingSelected();
-            }
         }
     }
     }

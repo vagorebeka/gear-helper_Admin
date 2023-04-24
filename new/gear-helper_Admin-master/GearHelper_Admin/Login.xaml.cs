@@ -40,7 +40,7 @@ namespace GearHelper_Admin
                 using (MySqlCommand sqlcmd = new MySqlCommand(query, con))
                 {
                     sqlcmd.Parameters.Add("@name", MySqlDbType.VarChar).Value = usernameBox.Text;
-                    sqlcmd.Parameters.Add("@password", MySqlDbType.VarChar).Value = passwordBox.Text;
+                    sqlcmd.Parameters.Add("@password", MySqlDbType.VarChar).Value = passwordBox.Password;
                     con.Open();
                     Object response = await sqlcmd.ExecuteScalarAsync();
                     if (response != null)

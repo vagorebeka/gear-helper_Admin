@@ -6,29 +6,29 @@
         xmlns:local="clr-namespace:GearHelper_Admin"
         mc:Ignorable="d"
         Title="Gear Helper Admin" Height="600" Width="700">
-    <Grid>
+    <Grid Background="Azure">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="6*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBox Text="Gear Helper" Grid.ColumnSpan="5" Margin="10,10,10,10"/>
+        <TextBox Text="Gear Helper" Grid.ColumnSpan="5" Margin="5,5,5,10" FontSize="20" Background="Azure" BorderThickness="0" FontWeight="Bold"/>
         <StackPanel Grid.Row="1">
-            <Button x:Name="userList" Content="User list" Click="userList_Click" Margin="5, 5, 5, 10"/>
-            <Button x:Name="itemList" Content="Item list" Click="itemList_Click" Margin="5, 5, 5, 10"/>
-            <Button x:Name="exitButton" Content="Exit" Click="exitButton_Click"  Margin="5, 5, 5, 10"/>
+            <Button x:Name="userList" Content="User list" Click="userList_Click" Margin="5, 5, 5, 10" Background="Lavender"/>
+            <Button x:Name="itemList" Content="Item list" Click="itemList_Click" Margin="5, 5, 5, 10" Background="Lavender"/>
+            <Button x:Name="exitButton" Content="Exit" Click="exitButton_Click"  Margin="5, 5, 5, 10" Background="MistyRose"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="1" x:Name="stackPanel">
             <TextBlock x:Name="defaultText" Text="Please choose a list"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="2">
-            <Button x:Name="newItemBtn" Content="New Item" Click="newItem_Click" Margin="5, 5, 5, 5"/>
-            <Button x:Name="modifytBtn" Content="Modify" Click="modifytBtn_Click" Margin="5, 5, 5, 5"/>
-            <Button x:Name="deleteBtn" Content="Delete" Click="deleteBtn_Click" Margin="5, 5, 5, 5"/>
+            <Button x:Name="newItemBtn" Content="New Item" Click="newItem_Click" Margin="5, 5, 5, 5" Background="AliceBlue"/>
+            <Button x:Name="modifytBtn" Content="Modify" Click="modifytBtn_Click" Margin="5, 5, 5, 5" Background="LavenderBlush"/>
+            <Button x:Name="deleteBtn" Content="Delete" Click="deleteBtn_Click" Margin="5, 5, 5, 5" Background="MistyRose"/>
             <Label x:Name="lblName" Margin="2" FontSize="20"/>
             <Label x:Name="lblEmail" Margin="2" FontSize="20"/>
                 <Label x:Name="labelRight" Margin="2" FontSize="20"/>

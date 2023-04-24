@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GearHelper_Admin"
         mc:Ignorable="d"
-        Title="Gear Helper Admin Login" Height="450" Width="800">
+        Title="Gear Helper Admin Login" Height="300" Width="500">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -17,14 +17,14 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="1">
-            <Label Content="username"/>
-            <Label Content="password"/>
+            <Label Content="username" HorizontalAlignment="Right" Margin="0,0,15,0" Height="30"/>
+            <Label Content="password" HorizontalAlignment="Right" Margin="0,0,15,0" Height="30"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="1">
-            <TextBox x:Name="usernameBox"/>
-            <TextBox x:Name="passwordBox"/>
+            <TextBox x:Name="usernameBox" Width="100" HorizontalAlignment="Left" Margin="5,6.02,0,6.02"/>
+            <PasswordBox x:Name="passwordBox" Width="100" HorizontalAlignment="Left" Margin="5,6.02,0,6.02"/>
         </StackPanel>
         <Label x:Name="infoLabel" Grid.Row="2"/>
-        <Button x:Name="loginButton" Content="Login" Grid.Row="2" Grid.Column="1" Height="20" Width="50" Click="loginButton_Click"/>
+        <Button x:Name="loginButton" Content="Login" Grid.Row="2" Grid.Column="1" Height="20" Width="50" Click="loginButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 </Window>
