@@ -25,6 +25,7 @@ namespace GearHelper_Admin
     {
 
         private static readonly HttpClient client = new HttpClient();
+        String loggedInUser = "";
 
         public Login()
         {
@@ -50,10 +51,11 @@ namespace GearHelper_Admin
                     con.Close();
                 }
             }
+            loggedInUser = usernameBox.Text;
 
             if (admin)
             {
-                MainWindow mainWindow = new MainWindow();
+                MainWindow mainWindow = new MainWindow(loggedInUser);
                 mainWindow.Show();
                 this.Hide();
             }

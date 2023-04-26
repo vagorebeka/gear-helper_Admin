@@ -25,6 +25,8 @@ namespace GearHelper_Admin
     /// </summary>
     public partial class MainWindow : Window
     {
+        String loggedInUser = "";
+
         private static readonly HttpClient client = new HttpClient();
         private readonly string itemUrl = "http://localhost:8000/api/item";
         private readonly string userUrl = "http://localhost:8000/api/user";
@@ -50,11 +52,13 @@ namespace GearHelper_Admin
         List<String> itemNameList = new List<String>();
 
         MessageBoxButton okButton = MessageBoxButton.OK;
+        MessageBoxButton yesNoButton = MessageBoxButton.YesNo;
         String errorCaption = "Error";
 
-        public MainWindow()
+        public MainWindow(String loggedInUser)
         {
             InitializeComponent();
+            this.loggedInUser = loggedInUser;
         }
 
         // GENERAL
@@ -605,13 +609,19 @@ namespace GearHelper_Admin
             if ((bool)isAdminBox.IsChecked)
             {
                 isAdmin = "1";
+                String message = "Are you sure you want this user to be an admin?";
+                String caption = "Admin rights";
+                if (MessageBox.Show(message, caption, yesNoButton) == MessageBoxResult.No)
+                {
+                    isAdmin = "0";
+                }
             }
 
             var values = new Dictionary<String, string>
-                {
-                    {"email", emailBox.Text },
-                    {"admin", isAdmin }
-                };
+                        {
+                            {"email", emailBox.Text },
+                            {"admin", isAdmin }
+                        };
             FormUrlEncodedContent content = new FormUrlEncodedContent(values);
 
             String url = userUrl + "/" + userToModify.Id;
@@ -629,6 +639,7 @@ namespace GearHelper_Admin
             {
                 somethingWentWrong();
             }
+
         }
         
         private String convertMaterialBack(Item itemToModify)
@@ -655,19 +666,30 @@ namespace GearHelper_Admin
         {
             String message;
             String caption;
-            if (listBox.SelectedItem != null)
+            try
             {
-                message = "Are you sure?";
-                caption = "Delete";
-                MessageBoxButton yesNoButton = MessageBoxButton.YesNo;
-                if (MessageBox.Show(message, caption, yesNoButton) == MessageBoxResult.Yes)
+                User userToDelete = (User)listBox.SelectedItem;
+                if (userToDelete.Name == loggedInUser)
                 {
-                    delete(listBox.SelectedItem);
+                    message = "You cannot delete yourself!";
+                    MessageBox.Show(message, errorCaption, okButton);
                 }
             }
-            else
+            catch
             {
-                nothingSelected();
+                if (listBox.SelectedItem != null)
+                {
+                    message = "Are you sure?";
+                    caption = "Delete";
+                    if (MessageBox.Show(message, caption, yesNoButton) == MessageBoxResult.Yes)
+                    {
+                        delete(listBox.SelectedItem);
+                    }
+                }
+                else
+                {
+                    nothingSelected();
+                }
             }
         }
 
@@ -718,11 +740,3 @@ namespace GearHelper_Admin
         }
     }
     }
-
-// TODO?: make/remove as admin button when user is selected + are you sure? + put user to change admin status
-
-// a modifyról a newra és vissza a modifyra megmarad a kijelölés (is this a problem?)
-
-// TODO: user saját magát nem törölheti
-
-// backend: idegen kulcsok
