@@ -32,11 +32,14 @@ namespace GearHelper_Admin
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Ellenőrzi, hogy a megadott name és password kombináció létezik, és a felhasználónak van admin jogosultsága.
+        /// </summary>
         private async void ValidateUser()
         {
             string query = "SELECT admin from users WHERE name=@name and password=@password";
             bool admin = false;
-            using (MySqlConnection con = new MySqlConnection("Server=localhost;Port=3306;User ID=username;Password=password;Database=gear-helper;")) //created a user with this data in phpmyadmin
+            using (MySqlConnection con = new MySqlConnection("Server=localhost;Port=3306;User ID=root;Password=;Database=gear-helper;"))
             {
                 using (MySqlCommand sqlcmd = new MySqlCommand(query, con))
                 {

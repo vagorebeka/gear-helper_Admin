@@ -63,6 +63,10 @@ namespace GearHelper_Admin
 
         // GENERAL
 
+        /// <summary>
+        /// Az itemek neveit rendezi egy listába.
+        /// </summary>
+        /// <returns>Lista, tagjai: minden item neve.</returns>
         private List<String> itemNamesToList()
         {
             using (var client = new HttpClient())
@@ -77,6 +81,9 @@ namespace GearHelper_Admin
             return itemNameList;
         }
 
+        /// <summary>
+        /// Létrehoz egy listboxot listázáshoz.
+        /// </summary>
         private void addListBox()
         {
             stackPanel.Children.Clear();
@@ -86,6 +93,9 @@ namespace GearHelper_Admin
             listBox.Height = 500;
         }
 
+        /// <summary>
+        /// Létrehoz egy "Cancel" feliratú gombot.
+        /// </summary>
         private void addCancelButton()
         {
             cancelButton.Content = "Cancel";
@@ -96,6 +106,11 @@ namespace GearHelper_Admin
             cancelButton.Background = Brushes.MistyRose;
         }
         
+        /// <summary>
+        /// Kitörli a stackPanel tartalmát.
+        /// </summary>
+        /// <param name="sender">cancelButton</param>
+        /// <param name="e"></param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             stackPanel.Children.Clear();
@@ -104,6 +119,9 @@ namespace GearHelper_Admin
         
         // MESSAGEBOXES
 
+        /// <summary>
+        /// Hibaüzenet arra az esetre, amikor kijelölés nélkül próbál a felhasználó módosítani vagy törölni.
+        /// </summary>
         private void nothingSelected()
         {
             String message = "Please choose an item or user";
@@ -111,12 +129,20 @@ namespace GearHelper_Admin
             MessageBox.Show(message, caption, okButton);
         }
 
+        /// <summary>
+        /// Általános hibaüzenet.
+        /// </summary>
         private void somethingWentWrong()
         {
             String message = "Something went wrong. Please try again";
             MessageBox.Show(message, errorCaption, okButton);
         }
 
+        /// <summary>
+        /// Megerősítést kér a felhasználótól. "Yes" válasz esetén a program bezáródik.
+        /// </summary>
+        /// <param name="sender">exitButton</param>
+        /// <param name="e"></param>
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
             String message = "Are you sure?";
@@ -130,9 +156,11 @@ namespace GearHelper_Admin
 
         // FORMS
 
+        /// <summary>
+        /// Hozzáadja a ComboBoxokhoz azoknak tartalmát az Add item és Modify item űrlapok megnyitásakor.
+        /// </summary>
         private void comboBoxAddItems()
         {
-            // TODO: add statistic class and clean up this code
             stat1ComboBox.Items.Add("AGI");
             stat1ComboBox.Items.Add("INT");
             stat1ComboBox.Items.Add("STA");
@@ -158,6 +186,9 @@ namespace GearHelper_Admin
             materialBox.Items.Add("plate");
         }
 
+        /// <summary>
+        /// Kitörli az Add item és Modify item űrlapok tartalmát.
+        /// </summary>
         private void clearItemForm()
         {
             nameBox.Clear();
@@ -184,6 +215,9 @@ namespace GearHelper_Admin
             listUsers();
         }
 
+        /// <summary>
+        /// Formázva kilistázza az itemek adatait.
+        /// </summary>
         private void listItems()
         {
             addListBox();
@@ -200,6 +234,9 @@ namespace GearHelper_Admin
             }
         }
 
+        /// <summary>
+        /// Formázva kilistázza a felhasználók adatait.
+        /// </summary>
         private void listUsers()
         {
             addListBox();
@@ -218,6 +255,11 @@ namespace GearHelper_Admin
 
         // ADD
         
+        /// <summary>
+        /// Létrehozza a New item űrlapot.
+        /// </summary>
+        /// <param name="sender">newItem</param>
+        /// <param name="e"></param>
         private void newItem_Click(object sender, RoutedEventArgs e)
         {
             stackPanel.Children.Clear();
@@ -283,6 +325,11 @@ namespace GearHelper_Admin
             addItem.Click += addItem_Click;
         }
         
+        /// <summary>
+        /// Leellenőrzi a megadott adatokat és elküldi az új item adatait a kliensnek POST requesttel.
+        /// </summary>
+        /// <param name="sender">addItem</param>
+        /// <param name="e"></param>
         private async void addItem_Click(object sender, RoutedEventArgs e)
         {
             if (nameTry() && statChoiceTry() && statAmountsTry() && slotTry() && materialTry())
@@ -319,6 +366,10 @@ namespace GearHelper_Admin
             }
         }
 
+        /// <summary>
+        /// Ellenőrzi, hogy mindhárom statisztika ki van választva és nincs két egyező választás.
+        /// </summary>
+        /// <returns>A statisztika helyesen lett-e megadva.</returns>
         private bool statChoiceTry()
         {
             bool ok = true;
@@ -336,7 +387,11 @@ namespace GearHelper_Admin
             }
             return ok;
         }
-        
+
+        /// <summary>
+        /// Ellenőrzi, hogy a statisztika mennyisége meg lett adva mindhárom helyen és szám lett megadva.
+        /// </summary>
+        /// <returns>A statisztika mennyisége helyesen lett-e megadva.</returns>
         private bool statAmountsTry()
         {
             bool num = true;
@@ -373,6 +428,10 @@ namespace GearHelper_Admin
             return num;
         }
 
+        /// <summary>
+        /// Ellenőrzi, hogy lett név megadva, és a megadott név nem szerepel még a nevek listájában.
+        /// </summary>
+        /// <returns>A név helyesen lett-e megadva.</returns>
         private bool nameTry()
         {
             bool nameOk = true;
@@ -391,6 +450,10 @@ namespace GearHelper_Admin
             return nameOk;
         }
 
+        /// <summary>
+        /// Ellenőrzi, hogy lett-e slot kiválasztva.
+        /// </summary>
+        /// <returns>Van-e kiválasztott slot.</returns>
         private bool slotTry()
         {
             bool slotOk = true;
@@ -403,6 +466,10 @@ namespace GearHelper_Admin
             return slotOk;
         }
 
+        /// <summary>
+        /// Ellenőrzi, hogy lett-e material kiválasztva.
+        /// </summary>
+        /// <returns>Van-e kiválasztott material.</returns>
         private bool materialTry()
         {
             bool materialOk = true;
@@ -415,6 +482,10 @@ namespace GearHelper_Admin
             return materialOk;
         }
 
+        /// <summary>
+        /// Átalakítja a ComboBoxban megadott materialt számmá, hogy ezt az adatot lehessen továbbküldeni az adatbázisnak.
+        /// </summary>
+        /// <returns>A kiválasztott materialnak megfelelő szám.</returns>
         private int materialConvert()
         {
             if (materialBox.Text == "cloth")
@@ -434,6 +505,11 @@ namespace GearHelper_Admin
 
         // MODIFY
 
+        /// <summary>
+        /// A listBoxban kiválasztott elem alapján eldönti, hogy item vagy user van kiválasztva, illetve hogy van-e kiválasztás.
+        /// </summary>
+        /// <param name="sender">modifyBtn</param>
+        /// <param name="e"></param>
         private void modifytBtn_Click(object sender, RoutedEventArgs e)
         {
             if (listBox.SelectedItem == null)
@@ -455,6 +531,9 @@ namespace GearHelper_Admin
             }
         }
 
+        /// <summary>
+        /// Létrehozza a Modify item űrlapot és kitölti a módosítandó item adataival.
+        /// </summary>
         private void modifyItem()
         {
             Item itemToModify = (Item)listBox.SelectedItem;
@@ -521,6 +600,11 @@ namespace GearHelper_Admin
             modifyItem.Click += ModifyItem_Click;
         }
 
+        /// <summary>
+        /// Leellenőrzi a megadott adatokat és elküldi a módosított item adatait a kliensnek PUT requesttel.
+        /// </summary>
+        /// <param name="sender">ModifyItem</param>
+        /// <param name="e"></param>
         private async void ModifyItem_Click(object sender, RoutedEventArgs e)
         {
             Item itemToModify = (Item)listBox.SelectedItem;
@@ -560,6 +644,9 @@ namespace GearHelper_Admin
             }
         }
 
+        /// <summary>
+        /// Létrehozza a Modify user űrlapot és kitölti a módosítandó user adataival.
+        /// </summary>
         private void modifyUser()
         {
             User userToModify = (User)listBox.SelectedItem;
@@ -602,6 +689,11 @@ namespace GearHelper_Admin
             modifyUser.Click += ModifyUser_Click;
         }
 
+        /// <summary>
+        /// Leellenőrzi a megadott adatokat és elküldi a módosított user adatait a kliensnek PUT requesttel.
+        /// </summary>
+        /// <param name="sender">ModifyUser</param>
+        /// <param name="e"></param>
         private async void ModifyUser_Click(object sender, RoutedEventArgs e)
         {
             User userToModify = (User)listBox.SelectedItem;
@@ -642,6 +734,11 @@ namespace GearHelper_Admin
 
         }
         
+        /// <summary>
+        /// Átalakítja az adatbázisban tárolt material számot az annak megfelelő stringgé.
+        /// </summary>
+        /// <param name="itemToModify">A Modify item űrlapon lévő item.</param>
+        /// <returns>Az item material tulajdonsága stringként.</returns>
         private String convertMaterialBack(Item itemToModify)
         {
             String materialToReturn = "";
@@ -662,6 +759,11 @@ namespace GearHelper_Admin
 
         // DELETE
 
+        /// <summary>
+        /// Ellenőrzi, hogy a felhasználó nem saját magát próbálja kitörölni, majd megerősítést kér a felhasználótól, és "Yes" válasz esetén meghívja a delete() metódust.
+        /// </summary>
+        /// <param name="sender">deleteBtn</param>
+        /// <param name="e"></param>
         private void deleteBtn_Click(object sender, RoutedEventArgs e)
         {
             String message;
@@ -693,6 +795,10 @@ namespace GearHelper_Admin
             }
         }
 
+        /// <summary>
+        /// Ellenőrzi, hogy item vagy user lett kijelölve, majd a megfelelő objektumot DELETE requesttel kitörli és erről megerősítést mutat.
+        /// </summary>
+        /// <param name="o">A listBoxban kiválasztott elem.</param>
         private async void delete(object o)
         {
             String message;
