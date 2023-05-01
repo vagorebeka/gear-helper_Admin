@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define GearHelper_Admin_TargetDir=$(var.GearHelper_Admin.TargetDir)?>
+	<Product Id="*" Name="gear_helper_Admin.Setup" Language="1033" Version="1.0.0.0" Manufacturer="VagoRebeka" UpgradeCode="3aa63a46-607b-4292-b00c-1bddd04c7a9c">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="ProductFeature" Title="gear_helper_Admin.Setup" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+			<ComponentGroupRef Id="runtimes_win_x86_native_files" />
+			<ComponentGroupRef Id="runtimes_win_x64_native_files" />
+			<ComponentGroupRef Id="runtimes_win_arm64_native_files" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="gear_helper_Admin.Setup">
+				  <Directory Id="runtimes" Name="runtimes">
+				    <Directory Id="runtimes_win_x64" Name="win-x64">
+				      <Directory Id="runtimes_win_x64_native" Name="native" />
+				    </Directory>
+				    <Directory Id="runtimes_win_arm64" Name="win-arm64">
+				      <Directory Id="runtimes_win_arm64_native" Name="native" />
+				    </Directory>
+				    <Directory Id="runtimes_win_x86" Name="win-x86">
+				      <Directory Id="runtimes_win_x86_native" Name="native" />
+				    </Directory>
+				  </Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			<!-- <Component Id="ProductComponent"> -->
+				<!-- TODO: Insert files, registry keys, and other resources here. -->
+			<!-- </Component> -->
+			<Component Id="GearHelper_Admin.exe" Guid="214f39b8-0886-406e-b538-1845a1aa79cf">
+			  <File Id="GearHelper_Admin.exe" Name="GearHelper_Admin.exe" Source="$(var.GearHelper_Admin_TargetDir)GearHelper_Admin.exe" />
+			</Component>
+			<Component Id="GearHelper_Admin.exe.config" Guid="2f784c8d-348f-4d46-bcff-698dc402213d">
+			  <File Id="GearHelper_Admin.exe.config" Name="GearHelper_Admin.exe.config" Source="$(var.GearHelper_Admin_TargetDir)GearHelper_Admin.exe.config" />
+			</Component>
+			<Component Id="MySqlConnector.dll" Guid="94d44609-ebc0-43fa-b6dc-80c5cf1ba09d">
+			  <File Id="MySqlConnector.dll" Name="MySqlConnector.dll" Source="$(var.GearHelper_Admin_TargetDir)MySqlConnector.dll" />
+			</Component>
+			<Component Id="Newtonsoft.Json.dll" Guid="82f576f1-f3b3-4cca-890c-999602c053d7">
+			  <File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" Source="$(var.GearHelper_Admin_TargetDir)Newtonsoft.Json.dll" />
+			</Component>
+			<Component Id="System.Threading.Tasks.Extensions.dll" Guid="88b4caf8-8d3d-46e7-847b-b16a8dde5ba0">
+			  <File Id="System.Threading.Tasks.Extensions.dll" Name="System.Threading.Tasks.Extensions.dll" Source="$(var.GearHelper_Admin_TargetDir)System.Threading.Tasks.Extensions.dll" />
+			</Component>
+			<Component Id="System.Runtime.CompilerServices.Unsafe.dll" Guid="b63bba60-cabd-47d1-a22e-aa788a14bff6">
+			  <File Id="System.Runtime.CompilerServices.Unsafe.dll" Name="System.Runtime.CompilerServices.Unsafe.dll" Source="$(var.GearHelper_Admin_TargetDir)System.Runtime.CompilerServices.Unsafe.dll" />
+			</Component>
+			<Component Id="System.Numerics.Vectors.dll" Guid="25f9dd55-1616-42d7-86e7-c3cc71386b1a">
+			  <File Id="System.Numerics.Vectors.dll" Name="System.Numerics.Vectors.dll" Source="$(var.GearHelper_Admin_TargetDir)System.Numerics.Vectors.dll" />
+			</Component>
+			<Component Id="System.Memory.dll" Guid="940a6bab-5d51-4d3b-9c22-0827a6d7b300">
+			  <File Id="System.Memory.dll" Name="System.Memory.dll" Source="$(var.GearHelper_Admin_TargetDir)System.Memory.dll" />
+			</Component>
+			<Component Id="System.Buffers.dll" Guid="81658eb6-2868-4cdb-8fbf-60b21e95d6a6">
+			  <File Id="System.Buffers.dll" Name="System.Buffers.dll" Source="$(var.GearHelper_Admin_TargetDir)System.Buffers.dll" />
+			</Component>
+			<Component Id="System.Diagnostics.DiagnosticSource.dll" Guid="0b99ce16-5e59-45fa-a8e5-1cf5daabd45f">
+			  <File Id="System.Diagnostics.DiagnosticSource.dll" Name="System.Diagnostics.DiagnosticSource.dll" Source="$(var.GearHelper_Admin_TargetDir)System.Diagnostics.DiagnosticSource.dll" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+	<Fragment>
+	  <ComponentGroup Id="runtimes_win_x86_native_files" Directory="runtimes_win_x86_native">
+	    <Component Id="runtimes_win_x86_native_WebView2Loader.dll" Guid="7cfcf1e9-a044-4703-9c8e-ba9912f54866">
+	      <File Id="runtimes_win_x86_native_WebView2Loader.dll" Name="WebView2Loader.dll" Source="$(var.GearHelper_Admin_TargetDir)runtimes\win-x86\native\WebView2Loader.dll" />
+	    </Component>
+	  </ComponentGroup>
+	</Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="runtimes_win_x64_native_files" Directory="runtimes_win_x64_native">
+      <Component Id="runtimes_win_x64_native_WebView2Loader.dll" Guid="5b372cef-0e5b-45e6-947a-6169bb43779d">
+        <File Id="runtimes_win_x64_native_WebView2Loader.dll" Name="WebView2Loader.dll" Source="$(var.GearHelper_Admin_TargetDir)runtimes\win-x64\native\WebView2Loader.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="runtimes_win_arm64_native_files" Directory="runtimes_win_arm64_native">
+      <Component Id="runtimes_win_arm64_native_WebView2Loader.dll" Guid="466ee7a9-18c8-4dbc-b112-98d773de91f5">
+        <File Id="runtimes_win_arm64_native_WebView2Loader.dll" Name="WebView2Loader.dll" Source="$(var.GearHelper_Admin_TargetDir)runtimes\win-arm64\native\WebView2Loader.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
